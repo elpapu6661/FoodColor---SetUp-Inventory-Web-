@@ -1,0 +1,20 @@
+[
+  {
+    "cliente": "nigga",
+    "producto": "Colorante Rojo Carmín #40",
+    "detalle": "250g",
+    "cantidad": 3,
+    "precio_unitario": 5000,
+    "total": 15000,
+    "fecha": "24/08/2026 20:04:43"
+  },
+  {
+    "cliente": "hori",
+    "producto": "Rosado Maricon #ELP",
+    "detalle": "1000g",
+    "cantidad": 25,
+    "precio_unitario": 60000,
+    "total": 1500000,
+    "fecha": "24/08/2026 22:30:44"
+  }
+]

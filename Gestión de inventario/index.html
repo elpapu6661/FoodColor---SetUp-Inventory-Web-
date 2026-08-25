@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ColorFood — Sistema de Inventario</title>
+<link rel="stylesheet" href="styles.css" />
+<style>
+.inventario-link {
+  position: fixed; bottom: 20px; right: 20px; z-index: 999;
+  background: #1a1a1a; color: #fff; padding: 10px 18px;
+  border-radius: 30px; text-decoration: none; font-size: 0.85rem;
+  font-weight: 500; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+.inventario-link:hover { transform: translateY(-2px); color: #fff; }
+.inventario-link em { color: #ff3d5a; font-style: normal; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-wrap">
+    <div class="logo">ColorFood</div>
+    <div class="logo-sub">Distribuidora de Colorantes Alimenticios</div>
+  </div>
+  <div style="display:flex;align-items:center;gap:12px;">
+    <a href="http://localhost:5000" style="color:rgba(255,255,255,0.5);text-decoration:none;font-size:0.78rem;font-family:'DM Mono',monospace;">← Ir a FoodColor</a>
+    <a href="/logout" style="color:rgba(255,255,255,0.5);text-decoration:none;font-size:0.78rem;font-family:'DM Mono',monospace;">Cerrar sesión</a>
+    <div class="status-pill">
+      <div class="status-dot" id="statusDot"></div>
+      <span id="statusText">VERIFICANDO</span>
+    </div>
+  </div>
+</header>
+
+<div class="color-stripe"></div>
+
+<nav class="nav-tabs">
+  <button class="tab-btn active" data-tab="inventario" onclick="switchTab('inventario')">
+    <span class="tab-icon">📦</span> Registrar Inventario
+  </button>
+  <button class="tab-btn" data-tab="stock" onclick="switchTab('stock')">
+    <span class="tab-icon">📋</span> Ver Stock
+  </button>
+  <button class="tab-btn" data-tab="pedido" onclick="switchTab('pedido')">
+    <span class="tab-icon">🧾</span> Crear Pedido
+  </button>
+</nav>
+
+<div class="container">
+
+  <div id="tab-inventario" class="section-view active">
+    <div class="page-title">
+      <div>
+        <h1>Registrar <em>Inventario</em></h1>
+        <div class="subtitle">Agrega nuevos productos o aumenta el stock de existentes</div>
+      </div>
+    </div>
+    <div class="two-col">
+      <aside class="card sticky-card">
+        <div class="card-title"><div class="dot"></div> Ingreso de Producto</div>
+        <div class="field">
+          <label>Nombre del producto</label>
+          <input type="text" id="inv_nombre" placeholder="Ej: Colorante Rojo #40">
+        </div>
+        <div class="field">
+          <label>Categoría</label>
+          <select id="inv_category" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:var(--r);color:var(--ink);font-family:var(--body);font-size:.87rem;padding:10px 13px;outline:none;">
+            <option value="colorantes">Colorantes</option>
+            <option value="esencias">Esencias</option>
+            <option value="aditivos">Aditivos</option>
+            <option value="otros">Otros</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Tipo / Unidad</label>
+          <input type="text" id="inv_tipo" placeholder="Ej: 250g, 1kg, 100ml">
+        </div>
+        <div class="field">
+          <label>Descripción (opcional)</label>
+          <input type="text" id="inv_desc" placeholder="Breve descripción del producto">
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Precio ($)</label>
+            <input type="number" id="inv_precio" placeholder="0" min="0" step="1">
+          </div>
+          <div class="field">
+            <label>Cantidad en stock</label>
+            <input type="number" id="inv_stock" placeholder="0" min="1" step="1">
+          </div>
+        </div>
+        <button class="btn btn-primary btn-full" id="btnAgregar" onclick="agregarProducto()">+ Registrar en Inventario</button>
+      </aside>
+      <div>
+        <div class="card">
+          <div class="card-title"><div class="dot" style="background:var(--c3)"></div> ¿Cómo funciona?</div>
+          <p style="font-size:0.85rem;color:var(--ink-mid);line-height:1.7;margin-bottom:14px;">
+            Si el producto <strong>ya existe</strong> (mismo nombre), su stock se incrementará y el precio se actualizará.
+          </p>
+          <p style="font-size:0.85rem;color:var(--ink-mid);line-height:1.7;">
+            Si es <strong>producto nuevo</strong>, se creará con todos los datos ingresados.
+          </p>
+          <p style="font-size:0.85rem;color:var(--ink-mid);line-height:1.7;margin-top:14px;">
+            Los cambios se reflejarán automáticamente en el <a href="http://localhost:5000" style="color:var(--c1);">catálogo principal</a>.
+          </p>
+          <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border);">
+            <div style="font-size:0.7rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-light);margin-bottom:10px;font-weight:500;">Productos en sistema</div>
+            <div style="font-family:var(--mono);font-size:1.8rem;font-weight:500;color:var(--ink);" id="totalProductos">—</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="tab-stock" class="section-view">
+    <div class="page-title">
+      <div>
+        <h1>Productos en <em>Stock</em></h1>
+        <div class="subtitle" id="stockSubtitle">Cargando inventario…</div>
+      </div>
+      <button class="btn btn-outline" onclick="cargarProductos()">↻ Actualizar</button>
+    </div>
+    <div class="card">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Nombre</th>
+              <th>Categoría</th>
+              <th>Tipo</th>
+              <th>Precio</th>
+              <th>Stock</th>
+            </tr>
+          </thead>
+          <tbody id="tablaStock">
+            <tr class="skeleton-row"><td colspan="6"></td></tr>
+            <tr class="skeleton-row"><td colspan="6"></td></tr>
+            <tr class="skeleton-row"><td colspan="6"></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div id="tab-pedido" class="section-view">
+    <div class="page-title">
+      <div>
+        <h1>Crear <em>Pedido</em></h1>
+        <div class="subtitle">Selecciona un producto, ingresa la cantidad y genera la boleta</div>
+      </div>
+    </div>
+    <div class="two-col">
+      <aside class="card sticky-card">
+        <div class="card-title"><div class="dot" style="background:var(--c2)"></div> Datos del Pedido</div>
+        <div class="field">
+          <label>Nombre del cliente</label>
+          <input type="text" id="ped_cliente" placeholder="Nombre del cliente">
+        </div>
+        <div class="field">
+          <label>Seleccionar producto</label>
+          <div class="product-selector" id="productSelector">
+            <div style="font-size:0.8rem;color:var(--ink-light);padding:10px;">Cargando productos…</div>
+          </div>
+        </div>
+        <div class="field">
+          <label>Cantidad</label>
+          <input type="number" id="ped_cantidad" placeholder="0" min="1" step="1">
+        </div>
+        <button class="btn btn-success btn-full" id="btnPedido" onclick="generarPedido()">🧾 Generar Boleta</button>
+      </aside>
+      <div id="boletaContainer">
+        <div class="empty-state">
+          <div class="empty-icon">🧾</div>
+          <p>La boleta aparecerá aquí<br>una vez que confirmes el pedido.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<a href="http://localhost:5000" class="inventario-link">← <em>Food</em>Color Inicio</a>
+
+<script>
+const API = ''; // misma origin: el backend protege todo con sesión
+let productosCache = [];
+let selectedId = null;
+
+function toast(msg, isError) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (isError ? ' error' : '') + ' show';
+  setTimeout(() => { t.className = 'toast' + (isError ? ' error' : ''); }, 2800);
+}
+
+function esc(str) { return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function fmt(val) { const n = parseFloat(val); if (isNaN(n)) return '—'; return '$' + n.toLocaleString('es-CL'); }
+
+async function checkStatus() {
+  const dot = document.getElementById('statusDot');
+  const txt = document.getElementById('statusText');
+  try {
+    const r = await fetch(API + '/productos', { signal: AbortSignal.timeout(3000) });
+    if (r.status === 401) { window.location.href = '/login'; return; }
+    if (r.ok) { dot.classList.add('online'); txt.textContent = 'SERVIDOR ACTIVO'; }
+    else throw new Error();
+  } catch { dot.classList.remove('online'); txt.textContent = 'SIN CONEXIÓN'; }
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('.section-view').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  document.querySelector('[data-tab="' + tab + '"]').classList.add('active');
+  if (tab === 'stock') cargarTablaStock();
+  if (tab === 'pedido') cargarSelectorProductos();
+}
+
+async function cargarProductos() {
+  try {
+    const r = await fetch(API + '/productos');
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    productosCache = await r.json();
+    const tot = document.getElementById('totalProductos');
+    if (tot) tot.textContent = productosCache.length;
+    return productosCache;
+  } catch (err) {
+    toast('Error al conectar con el servidor.', true);
+    return null;
+  }
+}
+
+async function cargarTablaStock() {
+  const tbody = document.getElementById('tablaStock');
+  const sub = document.getElementById('stockSubtitle');
+  tbody.innerHTML = '<tr class="skeleton-row"><td colspan="6"></td></tr><tr class="skeleton-row"><td colspan="6"></td></tr><tr class="skeleton-row"><td colspan="6"></td></tr>';
+  const productos = await cargarProductos();
+  if (!productos) {
+    tbody.innerHTML = '<tr><td colspan="6"><div class="error-box">No se pudo conectar con el servidor (localhost:5001).</div></td></tr>';
+    sub.textContent = 'Error al cargar datos';
+    return;
+  }
+  sub.textContent = productos.length + ' producto' + (productos.length !== 1 ? 's' : '') + ' registrado' + (productos.length !== 1 ? 's' : '');
+  if (productos.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">🎨</div><p>Sin productos registrados.</p></div></td></tr>';
+    return;
+  }
+  tbody.innerHTML = productos.map((p, i) => {
+    const stockBajo = p.stock < 5;
+    return '<tr><td style="color:var(--ink-light);font-family:var(--mono);font-size:0.8rem;">' + (i + 1) + '</td>' +
+      '<td><strong>' + esc(p.name) + '</strong></td>' +
+      '<td><span class="badge badge-tipo">' + esc(p.category || '—') + '</span></td>' +
+      '<td><span class="badge badge-tipo">' + esc(p.tipo_unidad || '—') + '</span></td>' +
+      '<td><span class="price-text">' + fmt(p.precio) + '</span></td>' +
+      '<td><span class="stock-num ' + (stockBajo ? 'badge badge-low' : '') + '">' + (p.stock ?? '—') + '</span>' +
+      (stockBajo ? '<span style="font-size:0.7rem;color:var(--warning);margin-left:6px;">Stock bajo</span>' : '') + '</td></tr>';
+  }).join('');
+}
+
+async function agregarProducto() {
+  const nombre = document.getElementById('inv_nombre').value.trim();
+  const category = document.getElementById('inv_category').value;
+  const tipo = document.getElementById('inv_tipo').value.trim();
+  const desc = document.getElementById('inv_desc').value.trim();
+  const precio = document.getElementById('inv_precio').value.trim();
+  const stock = document.getElementById('inv_stock').value.trim();
+
+  if (!nombre) { toast('El nombre del producto es obligatorio.', true); return; }
+  if (precio === '') { toast('Ingresa el precio.', true); return; }
+  if (!stock || parseInt(stock) < 1) { toast('La cantidad debe ser mayor a 0.', true); return; }
+
+  const btn = document.getElementById('btnAgregar');
+  btn.disabled = true;
+  btn.textContent = 'Registrando…';
+
+  try {
+    const r = await fetch(API + '/productos', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: nombre, category, tipo_unidad: tipo, desc, precio: parseFloat(precio), stock: parseInt(stock) })
+    });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const data = await r.json();
+    toast('✓ ' + data.mensaje);
+    document.getElementById('inv_nombre').value = '';
+    document.getElementById('inv_tipo').value = '';
+    document.getElementById('inv_desc').value = '';
+    document.getElementById('inv_precio').value = '';
+    document.getElementById('inv_stock').value = '';
+    await cargarProductos();
+  } catch (err) {
+    toast('Error al registrar: ' + err.message, true);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '+ Registrar en Inventario';
+  }
+}
+
+async function cargarSelectorProductos() {
+  const sel = document.getElementById('productSelector');
+  sel.innerHTML = '<div style="font-size:0.8rem;color:var(--ink-light);padding:10px;">Cargando…</div>';
+  selectedId = null;
+  const productos = await cargarProductos();
+  if (!productos || productos.length === 0) {
+    sel.innerHTML = '<div style="font-size:0.8rem;color:var(--ink-light);padding:10px;">No hay productos disponibles.</div>';
+    return;
+  }
+  sel.innerHTML = productos.map(p =>
+    '<div class="product-option" data-id="' + p.id + '" onclick="seleccionarProducto(' + p.id + ')">' +
+      '<div><div class="po-name">' + esc(p.name) + '</div>' +
+      '<div class="po-info">' + esc(p.tipo_unidad || '—') + ' · Stock: ' + (p.stock ?? '?') + '</div></div>' +
+      '<div class="po-price">' + fmt(p.precio) + '</div></div>'
+  ).join('');
+}
+
+function seleccionarProducto(id) {
+  document.querySelectorAll('.product-option').forEach(el => el.classList.remove('selected'));
+  const el = document.querySelector('.product-option[data-id="' + id + '"]');
+  if (el) el.classList.add('selected');
+  selectedId = id;
+}
+
+async function generarPedido() {
+  const cliente = document.getElementById('ped_cliente').value.trim();
+  const cantidad = parseInt(document.getElementById('ped_cantidad').value);
+
+  if (!cliente) { toast('Ingresa el nombre del cliente.', true); return; }
+  if (!selectedId) { toast('Selecciona un producto.', true); return; }
+  if (!cantidad || cantidad < 1) { toast('La cantidad debe ser mayor a 0.', true); return; }
+
+  const prod = productosCache.find(p => p.id === selectedId);
+  if (!prod) { toast('Producto no encontrado.', true); return; }
+  if (cantidad > prod.stock) { toast('Stock insuficiente. Disponible: ' + prod.stock, true); return; }
+
+  const btn = document.getElementById('btnPedido');
+  btn.disabled = true;
+  btn.textContent = 'Procesando…';
+
+  try {
+    const r = await fetch(API + '/pedidos', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ cliente, producto_id: selectedId, cantidad })
+    });
+    if (!r.ok) {
+      const err = await r.json();
+      throw new Error(err.error || 'HTTP ' + r.status);
+    }
+    const data = await r.json();
+    const ahora = new Date();
+    const fecha = ahora.toLocaleDateString('es-CL', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' });
+    const totalPago = cantidad * prod.precio;
+
+    document.getElementById('boletaContainer').innerHTML =
+      '<div class="boleta-wrap">' +
+        '<div class="boleta-header"><div class="boleta-logo">ColorFood</div><div class="boleta-tagline">Distribuidora de Colorantes Alimenticios</div></div>' +
+        '<div class="boleta-stripe"></div>' +
+        '<div class="boleta-body">' +
+          '<div class="boleta-meta"><div>Fecha<br><strong>' + fecha + '</strong></div><div style="text-align:right">Cliente<br><strong>' + esc(cliente) + '</strong></div></div>' +
+          '<div class="boleta-row"><span class="label">Producto</span><span class="val">' + esc(prod.name) + '</span></div>' +
+          '<div class="boleta-row"><span class="label">Tipo / Unidad</span><span class="val">' + esc(prod.tipo_unidad || '—') + '</span></div>' +
+          '<div class="boleta-row"><span class="label">Cantidad</span><span class="val">' + cantidad + '</span></div>' +
+          '<div class="boleta-row"><span class="label">Precio unitario</span><span class="val">' + fmt(prod.precio) + '</span></div>' +
+          '<div class="boleta-total"><span class="total-label">TOTAL A PAGAR</span><span class="total-amount">' + fmt(totalPago) + '</span></div>' +
+        '</div>' +
+        '<div class="boleta-footer">Gracias por su compra · Stock restante: ' + data.stock_restante + '</div>' +
+      '</div>';
+
+    toast('✓ Boleta generada correctamente');
+    document.getElementById('ped_cliente').value = '';
+    document.getElementById('ped_cantidad').value = '';
+    selectedId = null;
+    await cargarSelectorProductos();
+  } catch (err) {
+    toast('Error: ' + err.message, true);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '🧾 Generar Boleta';
+  }
+}
+
+['inv_nombre','inv_tipo','inv_precio','inv_stock'].forEach(id => {
+  document.getElementById(id)?.addEventListener('keydown', e => { if (e.key === 'Enter') agregarProducto(); });
+});
+
+checkStatus();
+cargarProductos();
+setInterval(checkStatus, 15000);
+</script>
+
+</body>
+</html>

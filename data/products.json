@@ -1,0 +1,52 @@
+[
+  {
+    "id": 1,
+    "name": "Colorante Rojo Carmín #40",
+    "category": "colorantes",
+    "desc": "Colorante natural intenso para lácteos y bebidas.",
+    "img": "",
+    "precio": 5000,
+    "stock": 12,
+    "tipo_unidad": "250g"
+  },
+  {
+    "id": 2,
+    "name": "Azul Profundo #3910",
+    "category": "colorantes",
+    "desc": "Colorante azul intenso para repostería y bebidas.",
+    "img": "",
+    "precio": 3200,
+    "stock": 13,
+    "tipo_unidad": "600g"
+  },
+  {
+    "id": 3,
+    "name": "Rosado Maricon #ELP",
+    "category": "colorantes",
+    "desc": "Colorante rosado para aplicaciones especiales.",
+    "img": "",
+    "precio": 60000,
+    "stock": 25,
+    "tipo_unidad": "1000g"
+  },
+  {
+    "id": 4,
+    "name": "Esencia de Vainilla",
+    "category": "esencias",
+    "desc": "Esencia concentrada para repostería.",
+    "img": "",
+    "precio": 4500,
+    "stock": 20,
+    "tipo_unidad": "100ml"
+  },
+  {
+    "id": 5,
+    "name": "Aditivo Conservante E-211",
+    "category": "aditivos",
+    "desc": "Conservante para prolongar vida útil.",
+    "img": "",
+    "precio": 2800,
+    "stock": 30,
+    "tipo_unidad": "500g"
+  }
+]

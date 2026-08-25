@@ -1,0 +1,14 @@
+[
+    {
+        "nombre_producto": "azul profundo #3910",
+        "tipo_producto": "600g",
+        "precio": 50.0,
+        "stock": 13
+    },
+    {
+        "nombre_producto": "rosado maricon #ELP",
+        "tipo_producto": "1000g",
+        "precio": 60000.0,
+        "stock": 50
+    }
+]

@@ -1,0 +1,54 @@
+# Compiled files
+target/
+*.class
+*.jar
+*.war
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Logs
+logs/
+*.log
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+venv/
+env/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Data files (contain sensitive data)
+data/products.json
+data/pedidos.json
+Gestión de inventario/users.json
+Gestión de inventario/products.json
+Gestión de inventario/pedidos.json
+
+# Security
+*.key
+*.pem
+*.crt
+
+# Temporary
+tmp/
+temp/
+*.tmp

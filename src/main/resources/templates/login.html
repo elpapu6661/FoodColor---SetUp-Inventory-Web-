@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="https://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Acceso restringido | ColorFood</title>
+<link rel="stylesheet" th:href="@{/css/login.css}">
+</head>
+<body>
+<div class="card">
+  <div class="logo">Color<em>Food</em></div>
+  <div class="sub">Sistema de Inventario · Solo personal autorizado</div>
+  
+  <div th:if="${param.error}" class="error">Usuario o contraseña incorrectos</div>
+  <div th:if="${param.logout}" class="error" style="background:rgba(42,157,143,.1);border-color:rgba(42,157,143,.4);color:#2a9d8f;">Sesión cerrada correctamente</div>
+  
+  <form method="POST" action="/login" th:action="@{/login}">
+    <label>Usuario</label>
+    <input type="text" name="username" required autofocus>
+    <label>Contraseña</label>
+    <input type="password" name="password" required>
+    <button type="submit">Iniciar sesión</button>
+  </form>
+</div>
+</body>
+</html>

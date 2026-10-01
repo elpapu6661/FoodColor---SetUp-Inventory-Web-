@@ -1,0 +1,23 @@
+[ {
+  "id" : 2,
+  "name" : "Rojo Carmín",
+  "category" : "colorantes",
+  "desc" : "",
+  "img" : "",
+  "precio" : 2990,
+  "stock" : 2200,
+  "tipoUnidad" : "950ml",
+  "createdAt" : "29/09/2026 00:06:39",
+  "updatedAt" : "29/09/2026 23:34:54"
+}, {
+  "id" : 1,
+  "name" : "Rojo Vino",
+  "category" : "colorantes",
+  "desc" : "",
+  "img" : "",
+  "precio" : 1490,
+  "stock" : 300,
+  "tipoUnidad" : "250g",
+  "createdAt" : "28/09/2026 23:57:00",
+  "updatedAt" : "29/09/2026 23:38:39"
+} ]

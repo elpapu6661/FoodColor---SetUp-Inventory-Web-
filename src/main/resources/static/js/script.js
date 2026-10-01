@@ -30,16 +30,21 @@ function fmtPrice(val) {
 }
 
 async function loadProducts() {
-  const res = await fetch(`/api/productos?category=${currentCat}&q=${search.value}`);
-  const data = await res.json();
-  renderGrid(data);
+  try {
+    const res = await fetch(`/api/public/productos?category=${currentCat}&q=${encodeURIComponent(search.value)}`);
+    const data = await res.json();
+    renderGrid(data);
+  } catch (err) {
+    console.error('Error cargando productos:', err);
+    grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;padding:40px;color:var(--ink-mid);">Error al cargar productos</p>';
+  }
 }
 
 function renderGrid(data) {
   grid.innerHTML = data.map(p => {
     const imgHtml = p.img
       ? `<img src="${p.img}" alt="${p.name}">`
-      : `<div class="card-img-placeholder" style="background:linear-gradient(135deg,var(--primary),var(--secondary));height:160px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:2.5rem;font-weight:700;color:#fff;">${p.name.charAt(0)}</div>`;
+      : `<div class="card-img-placeholder" style="background:linear-gradient(135deg,var(--primary),var(--secondary));height:180px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:2.5rem;font-weight:700;color:#fff;">${p.name.charAt(0)}</div>`;
     return `<div class="card">
       ${imgHtml}
       <h3>${p.name}</h3>
@@ -50,7 +55,6 @@ function renderGrid(data) {
       </div>
     </div>`;
   }).join('');
-  // animación de entrada escalonada
   document.querySelectorAll('.card').forEach((c, i) => {
     setTimeout(() => c.classList.add('show'), i * 100);
   });
@@ -75,21 +79,28 @@ document.getElementById('contact-form').addEventListener('submit', async (e) => 
   const form = e.target;
   const payload = Object.fromEntries(new FormData(form));
   const status = document.getElementById('form-status');
-  const res = await fetch('/api/contact', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
-  });
-  const data = await res.json();
-  status.textContent = data.ok ? '✅ Mensaje enviado' : '❌ ' + data.error;
-  if (data.ok) form.reset();
+  try {
+    const res = await fetch('/api/public/contact', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    status.textContent = data.ok ? '✅ Mensaje enviado' : '❌ ' + data.error;
+    status.className = data.ok ? 'ok' : 'error';
+    if (data.ok) form.reset();
+  } catch (err) {
+    status.textContent = '❌ Error de conexión';
+    status.className = 'error';
+  }
 });
 
 // scroll suave
 document.querySelectorAll('a[href^="#"]').forEach(a => {
   a.addEventListener('click', e => {
     e.preventDefault();
-    document.querySelector(a.getAttribute('href')).scrollIntoView({behavior:'smooth'});
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) target.scrollIntoView({behavior:'smooth'});
   });
 });
 

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" xmlns:th="https://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,8 +14,8 @@
   <title>Food Color | Colorantes, Aditivos y Esencias</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Fraunces:opsz,wght@9..144,400;9..144,700&family=DM+Mono&display=swap">
+  <link rel="stylesheet" th:href="@{/css/style.css}">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 </head>
 <body>
@@ -53,7 +53,7 @@
 <!-- SLIDER -->
 <section id="slider" class="slider" aria-label="Banner principal">
   <div class="slides" role="list" aria-live="polite">
-    <div class="slide active" role="listitem" aria-label="Cientos de productos para sus alimentos">
+    <div class="slide active" role="listitem" style="background-image: url('https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=1920&q=80');" aria-label="Cientos de productos para sus alimentos">
       <div class="slide-overlay"></div>
       <div class="slide-content">
         <h3>Cientos de productos</h3>
@@ -62,7 +62,7 @@
         <a href="#categorias" class="btn-slide">Conozca Más</a>
       </div>
     </div>
-    <div class="slide" role="listitem" aria-label="Calidad profesional para la industria alimentaria">
+    <div class="slide" role="listitem" style="background-image: url('https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=1920&q=80');" aria-label="Calidad profesional para la industria alimentaria">
       <div class="slide-overlay"></div>
       <div class="slide-content">
         <h3>Calidad profesional</h3>
@@ -71,7 +71,7 @@
         <a href="#categorias" class="btn-slide">Ver productos</a>
       </div>
     </div>
-    <div class="slide" role="listitem" aria-label="Asesoría especializada para resultados óptimos">
+    <div class="slide" role="listitem" style="background-image: url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1920&q=80');" aria-label="Asesoría especializada para resultados óptimos">
       <div class="slide-overlay"></div>
       <div class="slide-content">
         <h3>Asesoría especializada</h3>
@@ -97,22 +97,22 @@
     </div>
     <div class="cat-grid">
       <article class="cat-card">
-        <div class="cat-icon" style="background:var(--primary)" aria-hidden="true">C</div>
+        <div class="cat-icon cat-icon--primary" aria-hidden="true">C</div>
         <h4>Colorantes</h4>
         <p>Amplia gama de colores para diversas aplicaciones. Disponemos de colorantes en gel, polvo y lacas.</p>
       </article>
       <article class="cat-card">
-        <div class="cat-icon" style="background:var(--secondary)" aria-hidden="true">E</div>
+        <div class="cat-icon cat-icon--secondary" aria-hidden="true">E</div>
         <h4>Esencias</h4>
         <p>Más de 50 aromas y sabores diferentes para repostería e industria de la belleza.</p>
       </article>
       <article class="cat-card">
-        <div class="cat-icon" style="background:var(--primary)" aria-hidden="true">A</div>
+        <div class="cat-icon cat-icon--primary" aria-hidden="true">A</div>
         <h4>Aditivos</h4>
         <p>Gran variedad de productos que ayudarán a conseguir resultados óptimos en sus preparaciones.</p>
       </article>
       <article class="cat-card">
-        <div class="cat-icon" style="background:var(--secondary)" aria-hidden="true">O</div>
+        <div class="cat-icon cat-icon--secondary" aria-hidden="true">O</div>
         <h4>Otros</h4>
         <p>Coco rallado, sabores y el nuevo Pronto Quick, entre otros productos.</p>
       </article>
@@ -154,7 +154,7 @@
     </div>
     <div class="blog-grid">
       <article class="blog-card">
-        <div class="blog-img" style="background:#ffb84d;" aria-hidden="true"></div>
+        <div class="blog-img blog-img--1" aria-hidden="true"></div>
         <div class="blog-body">
           <h3>Nuevo: Agar Agar</h3>
           <p class="blog-meta">Agosto, 2019 · Administrador</p>
@@ -162,7 +162,7 @@
         </div>
       </article>
       <article class="blog-card">
-        <div class="blog-img" style="background:#ff3d5a;" aria-hidden="true"></div>
+        <div class="blog-img blog-img--2" aria-hidden="true"></div>
         <div class="blog-body">
           <h3>Nuevo: Pronto Quick</h3>
           <p class="blog-meta">Agosto, 2019 · Administrador</p>
@@ -170,7 +170,7 @@
         </div>
       </article>
       <article class="blog-card">
-        <div class="blog-img" style="background:#1a1a1a;" aria-hidden="true"></div>
+        <div class="blog-img blog-img--3" aria-hidden="true"></div>
         <div class="blog-body">
           <h3>Horario de atención</h3>
           <p class="blog-meta">Septiembre, 2018 · Administrador</p>
@@ -237,6 +237,6 @@
   </div>
 </footer>
 
-<script src="{{ url_for('static', filename='script.js') }}"></script>
+<script th:src="@{/js/script.js}"></script>
 </body>
 </html>

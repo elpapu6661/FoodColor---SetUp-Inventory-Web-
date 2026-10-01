@@ -1,0 +1,110 @@
+# FoodColor - Migración a Java Spring Boot - Punto de Guardado
+
+## Estado Actual: ✅ Código completo, ❌ Compilación pendiente (JDK 25 no soporta release 21)
+
+## Resumen de Migración
+
+### Estructura del Proyecto
+```
+src/
+├── main/
+│   ├── java/com/foodcolor/
+│   │   ├── FoodColorApplication.java          # Main Spring Boot
+│   │   ├── config/
+│   │   │   └── DataInitializer.java           # Inicialización de datos de ejemplo
+│   │   ├── controller/
+│   │   │   ├── WebController.java             # Vistas Thymeleaf (/login, /inventory, /)
+│   │   │   ├── PublicCatalogController.java   # API pública (/api/public/productos, /api/public/contact)
+│   │   │   └── InventoryController.java       # API privada (/api/inventory/productos, /api/inventory/pedidos)
+│   │   ├── dto/
+│   │   │   ├── ProductRequest.java
+│   │   │   ├── ProductResponse.java
+│   │   │   ├── OrderRequest.java
+│   │   │   ├── OrderResponse.java
+│   │   │   ├── ContactRequest.java
+│   │   │   ├── ContactResponse.java
+│   │   │   └── ErrorResponse.java
+│   │   ├── entity/
+│   │   │   ├── Product.java                   # Entidad producto con validaciones
+│   │   │   └── Order.java                     # Entidad pedido/boleta
+│   │   ├── repository/
+│   │   │   ├── JsonFileRepository.java        # Base abstracta con lock RW + Jackson
+│   │   │   ├── ProductRepository.java         # CRUD + búsqueda por nombre/categoría
+│   │   │   └── OrderRepository.java           # CRUD pedidos
+│   │   ├── security/
+│   │   │   └── SecurityConfig.java            # Spring Security + form login + in-memory user
+│   │   └── service/
+│   │       ├── ProductService.java            # Lógica negocio productos (create/update stock)
+│   │       └── OrderService.java              # Lógica pedidos (validación stock + boleta)
+│   └── resources/
+│       ├── application.properties             # Configuración puertos, paths, security
+│       ├── templates/
+│       │   ├── index.html                     # Catálogo público (Thymeleaf)
+│       │   ├── login.html                     # Login (Thymeleaf)
+│       │   └── inventory.html                 # Panel inventario (Thymeleaf)
+│       ├── static/
+│       │   ├── css/
+│       │   │   ├── style.css                  # Estilos catálogo público
+│       │   │   ├── inventory.css              # Estilos panel inventario
+│       │   │   └── login.css                  # Estilos login
+│       │   └── js/
+│       │       ├── script.js                  # JS catálogo público (fetch + render)
+│       │       └── inventory.js               # JS panel inventario (tabs, CRUD, boletas)
+│       └── data/
+│           ├── products.json                  # 5 productos de ejemplo
+│           └── pedidos.json                   # Array vacío
+```
+
+### Funcionalidades Migradas
+
+**Catálogo Público (puerto 8080/):**
+- GET `/` → index.html (Thymeleaf)
+- GET `/api/public/productos?category=&q=` → JSON con filtros
+- POST `/api/public/contact` → Formulario contacto
+
+**Panel Inventario (puerto 8080/inventory - requiere login):**
+- GET `/login` → Formulario login (admin/foodcolor2026)
+- GET `/inventory` → Panel SPA 3 tabs (Registrar, Ver Stock, Crear Pedido)
+- GET `/api/inventory/productos` → Lista productos
+- POST `/api/inventory/productos` → Crear/actualizar producto (merge por nombre)
+- GET `/api/inventory/pedidos` → Historial boletas
+- POST `/api/inventory/pedidos` → Crear pedido + validar stock + generar boleta
+
+### Seguridad
+- Spring Security con form login
+- Usuario en memoria: admin / foodcolor2026 (BCrypt)
+- Rutas públicas: `/`, `/api/public/**`, `/login`, `/logout`, assets
+- Rutas protegidas: `/inventory`, `/api/inventory/**`
+
+### Datos
+- Almacenamiento en JSON files (`data/products.json`, `data/pedidos.json`)
+- Thread-safe con ReentrantReadWriteLock
+- Inicialización automática si no existen archivos
+
+---
+
+## Para Compilar y Ejecutar
+
+```bash
+# Opción 1: Usar Maven wrapper (si se genera)
+./mvnw spring-boot:run
+
+# Opción 2: Maven instalado + JDK 21+
+export JAVA_HOME=/path/to/jdk-21
+mvn spring-boot:run
+
+# Opción 3: Compilar JAR y ejecutar
+mvn clean package -DskipTests
+java -jar target/foodcolor-inventory-1.0.0.jar
+```
+
+**Nota:** El JDK actual es 25 (no soporta `--release 21`). Se requiere JDK 21 LTS.
+
+---
+
+## Próximos Pasos
+1. Instalar JDK 21 (Temurin, Azul Zulu, etc.)
+2. Ejecutar `mvn spring-boot:run`
+3. Verificar en http://localhost:8080 (catálogo) y http://localhost:8080/inventory (panel)
+4. Tests unitarios/integración
+5. Dockerfile para deployment

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="https://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ColorFood — Sistema de Inventario</title>
+<link rel="stylesheet" th:href="@{/css/inventory.css}">
+</head>
+<body>
+
+<header>
+  <div class="logo-wrap">
+    <div class="logo">ColorFood</div>
+    <div class="logo-sub">Distribuidora de Colorantes Alimenticios</div>
+  </div>
+  <div style="display:flex;align-items:center;gap:12px;">
+    <a href="/" style="color:rgba(255,255,255,0.5);text-decoration:none;font-size:0.78rem;font-family:'DM Mono',monospace;">← Ir a FoodColor</a>
+    <a href="/logout" style="color:rgba(255,255,255,0.5);text-decoration:none;font-size:0.78rem;font-family:'DM Mono',monospace;">Cerrar sesión</a>
+    <div class="status-pill">
+      <div class="status-dot" id="statusDot"></div>
+      <span id="statusText">VERIFICANDO</span>
+    </div>
+  </div>
+</header>
+
+<div class="color-stripe"></div>
+
+<nav class="nav-tabs">
+  <button class="tab-btn active" data-tab="inventario" onclick="switchTab('inventario')">
+    <span class="tab-icon">📦</span> Registrar Inventario
+  </button>
+  <button class="tab-btn" data-tab="stock" onclick="switchTab('stock')">
+    <span class="tab-icon">📋</span> Ver Stock
+  </button>
+  <button class="tab-btn" data-tab="pedido" onclick="switchTab('pedido')">
+    <span class="tab-icon">🧾</span> Crear Pedido
+  </button>
+</nav>
+
+<div class="container">
+
+  <div id="tab-inventario" class="section-view active">
+    <div class="page-title">
+      <div>
+        <h1>Registrar <em>Inventario</em></h1>
+        <div class="subtitle">Agrega nuevos productos o aumenta el stock de existentes</div>
+      </div>
+    </div>
+    <div class="two-col">
+      <aside class="card sticky-card">
+        <div class="card-title"><div class="dot"></div> Ingreso de Producto</div>
+        <div class="field">
+          <label>Nombre del producto</label>
+          <input type="text" id="inv_nombre" placeholder="Ej: Colorante Rojo #40">
+        </div>
+        <div class="field">
+          <label>Categoría</label>
+          <select id="inv_category" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:var(--r);color:var(--ink);font-family:var(--body);font-size:.87rem;padding:10px 13px;outline:none;">
+            <option value="colorantes">Colorantes</option>
+            <option value="esencias">Esencias</option>
+            <option value="aditivos">Aditivos</option>
+            <option value="otros">Otros</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Tipo / Unidad</label>
+          <input type="text" id="inv_tipo" placeholder="Ej: 250g, 1kg, 100ml">
+        </div>
+        <div class="field">
+          <label>Descripción (opcional)</label>
+          <input type="text" id="inv_desc" placeholder="Breve descripción del producto">
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Precio ($)</label>
+            <input type="number" id="inv_precio" placeholder="0" min="0" step="1">
+          </div>
+          <div class="field">
+            <label>Cantidad en stock</label>
+            <input type="number" id="inv_stock" placeholder="0" min="1" step="1">
+          </div>
+        </div>
+        <button class="btn btn-primary btn-full" id="btnAgregar" onclick="agregarProducto()">+ Registrar en Inventario</button>
+      </aside>
+      <div>
+        <div class="card">
+          <div class="card-title"><div class="dot" style="background:var(--c3)"></div> ¿Cómo funciona?</div>
+          <p style="font-size:0.85rem;color:var(--ink-mid);line-height:1.7;margin-bottom:14px;">
+            Si el producto <strong>ya existe</strong> (mismo nombre), su stock se incrementará y el precio se actualizará.
+          </p>
+          <p style="font-size:0.85rem;color:var(--ink-mid);line-height:1.7;">
+            Si es <strong>producto nuevo</strong>, se creará con todos los datos ingresados.
+          </p>
+          <p style="font-size:0.85rem;color:var(--ink-mid);line-height:1.7;margin-top:14px;">
+            Los cambios se reflejarán automáticamente en el <a href="/" style="color:var(--c1);">catálogo principal</a>.
+          </p>
+          <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border);">
+            <div style="font-size:0.7rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-light);margin-bottom:10px;font-weight:500;">Productos en sistema</div>
+            <div style="font-family:var(--mono);font-size:1.8rem;font-weight:500;color:var(--ink);" id="totalProductos">—</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="tab-stock" class="section-view">
+    <div class="page-title">
+      <div>
+        <h1>Productos en <em>Stock</em></h1>
+        <div class="subtitle" id="stockSubtitle">Cargando inventario…</div>
+      </div>
+      <button class="btn btn-outline" onclick="cargarTablaStock()">↻ Actualizar</button>
+    </div>
+    <div class="card">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Nombre</th>
+              <th>Categoría</th>
+              <th>Tipo</th>
+              <th>Precio</th>
+              <th>Stock</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tablaStock">
+            <tr class="skeleton-row"><td colspan="7"></td></tr>
+            <tr class="skeleton-row"><td colspan="7"></td></tr>
+            <tr class="skeleton-row"><td colspan="7"></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div id="tab-pedido" class="section-view">
+    <div class="page-title">
+      <div>
+        <h1>Crear <em>Pedido</em></h1>
+        <div class="subtitle">Selecciona un producto, ingresa la cantidad y genera la boleta</div>
+      </div>
+    </div>
+    <div class="two-col">
+      <aside class="card sticky-card">
+        <div class="card-title"><div class="dot" style="background:var(--c2)"></div> Datos del Pedido</div>
+        <div class="field">
+          <label>Nombre del cliente</label>
+          <input type="text" id="ped_cliente" placeholder="Nombre del cliente">
+        </div>
+        <div class="field">
+          <label>Seleccionar producto</label>
+          <div class="product-selector" id="productSelector">
+            <div style="font-size:0.8rem;color:var(--ink-light);padding:10px;">Cargando productos…</div>
+          </div>
+        </div>
+        <div class="field">
+          <label>Cantidad</label>
+          <input type="number" id="ped_cantidad" placeholder="0" min="1" step="1">
+        </div>
+        <button class="btn btn-success btn-full" id="btnPedido" onclick="generarPedido()">🧾 Generar Boleta</button>
+      </aside>
+      <div id="boletaContainer">
+        <div class="empty-state">
+          <div class="empty-icon">🧾</div>
+          <p>La boleta aparecerá aquí<br>una vez que confirmes el pedido.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div id="alertContainer" class="alert-container"></div>
+
+<a href="/" class="inventario-link">← <em>Food</em>Color Inicio</a>
+
+<script th:src="@{/js/inventory.js}"></script>
+</body>
+</html>

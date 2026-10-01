@@ -1,0 +1,23 @@
+package com.foodcolor.dto;
+
+public class ContactResponse {
+    private boolean ok;
+    private String error;
+
+    public ContactResponse() {}
+
+    public ContactResponse(boolean ok) {
+        this.ok = ok;
+    }
+
+    public ContactResponse(boolean ok, String error) {
+        this.ok = ok;
+        this.error = error;
+    }
+
+    public boolean isOk() { return ok; }
+    public void setOk(boolean ok) { this.ok = ok; }
+
+    public String getError() { return error; }
+    public void setError(String error) { this.error = error; }
+}

@@ -1,0 +1,73 @@
+[ {
+  "cliente" : "Felipe Parra",
+  "producto" : "Rojo Vino",
+  "detalle" : "250g",
+  "cantidad" : 100,
+  "precioUnitario" : 1490,
+  "total" : 149000,
+  "fecha" : "28/09/2026 23:57:23"
+}, {
+  "cliente" : "Daniela Basualto",
+  "producto" : "Rojo Vino",
+  "detalle" : "250g",
+  "cantidad" : 140,
+  "precioUnitario" : 1490,
+  "total" : 208600,
+  "fecha" : "28/09/2026 23:57:50"
+}, {
+  "cliente" : "Felipe Parra",
+  "producto" : "Rojo Vino",
+  "detalle" : "250g",
+  "cantidad" : 5,
+  "precioUnitario" : 1490,
+  "total" : 7450,
+  "fecha" : "29/09/2026 00:07:03"
+}, {
+  "cliente" : "felipe",
+  "producto" : "Rojo Vino",
+  "detalle" : "250g",
+  "cantidad" : 240,
+  "precioUnitario" : 1490,
+  "total" : 357600,
+  "fecha" : "29/09/2026 00:32:18"
+}, {
+  "cliente" : "felipe",
+  "producto" : "Rojo Carmín",
+  "detalle" : "950ml",
+  "cantidad" : 199,
+  "precioUnitario" : 2990,
+  "total" : 595010,
+  "fecha" : "29/09/2026 00:38:36"
+}, {
+  "cliente" : "pepe",
+  "producto" : "Rojo Vino",
+  "detalle" : "250g",
+  "cantidad" : 5,
+  "precioUnitario" : 1490,
+  "total" : 7450,
+  "fecha" : "29/09/2026 00:39:15"
+}, {
+  "cliente" : "alo",
+  "producto" : "Rojo Vino",
+  "detalle" : "250g",
+  "cantidad" : 4,
+  "precioUnitario" : 1490,
+  "total" : 5960,
+  "fecha" : "29/09/2026 00:39:38"
+}, {
+  "cliente" : "Falope",
+  "producto" : "Rojo Carmín",
+  "detalle" : "950ml",
+  "cantidad" : 300,
+  "precioUnitario" : 2990,
+  "total" : 897000,
+  "fecha" : "29/09/2026 23:34:54"
+}, {
+  "cliente" : "miyata",
+  "producto" : "Rojo Vino",
+  "detalle" : "250g",
+  "cantidad" : 300,
+  "precioUnitario" : 1490,
+  "total" : 447000,
+  "fecha" : "29/09/2026 23:38:39"
+} ]
